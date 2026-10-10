@@ -1,14 +1,15 @@
 const canvas = document.getElementById("cvs");
 const ctx = canvas.getContext("2d");
 
-const SC = 21;
-const OY = 20;
+// Уменьшенный масштаб и увеличенные шрифты для телефонов
+const SC = 15; 
+const OY = 15; 
 const DURATION = 10;
 const TICK = 16;
 const ANIM = 42;
 const LIFT = 34;
 const GAP = 7;
-const SIZES = [9, 10, 11, 12];
+const SIZES = [11, 12, 13, 14];
 const FONT = "Arial";
 const BG = "#060208";
 const BGC = [0x06 / 255, 0x02 / 255, 0x08 / 255];
@@ -278,5 +279,4 @@ function shimmer() {
     setTimeout(shimmer, 140);
 }
 
-// Запуск
 setTimeout(() => requestAnimationFrame(step), 200);
