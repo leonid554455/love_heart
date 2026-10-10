@@ -1,15 +1,14 @@
 const canvas = document.getElementById("cvs");
 const ctx = canvas.getContext("2d");
 
-// Уменьшенный масштаб и увеличенные шрифты для телефонов
 const SC = 18; 
-const OY = 18; 
+const OY = 17; 
 const DURATION = 10;
 const TICK = 16;
 const ANIM = 42;
 const LIFT = 34;
 const GAP = 7;
-const SIZES = [11, 12, 13, 14];
+const SIZES = [12, 13, 14, 15]; 
 const FONT = "Arial";
 const BG = "#060208";
 const BGC = [0x06 / 255, 0x02 / 255, 0x08 / 255];
