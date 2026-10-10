@@ -2,12 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Ключевая строка для мобилок: запрещаем зум и подстраиваем под ширину экрана -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Love Heart</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
+    <!-- Внутреннее разрешение оставляем 800x800 для четкости (Retina), а размер на экране задаст CSS -->
     <canvas id="cvs" width="800" height="800"></canvas>
 </body>
 </html>
