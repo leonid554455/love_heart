@@ -1,18 +1,18 @@
 const canvas = document.getElementById("cvs");
 const ctx = canvas.getContext("2d");
 
-const SC = 18; 
-const OY = 17; 
-const DURATION = 10;
+const SC = 28; 
+const OY = 25; 
+const DURATION = 8; // Чуть быстрее сборка
 const TICK = 16;
 const ANIM = 42;
 const LIFT = 34;
 const GAP = 7;
-const SIZES = [12, 13, 14, 15]; 
+const SIZES = [15, 17, 19, 21]; 
 const FONT = "Arial";
 const BG = "#060208";
 const BGC = [0x06 / 255, 0x02 / 255, 0x08 / 255];
-const FLASH = [1.0, 0.78, 0.78];
+const FLASH = [1.0, 0.9, 0.9]; // Более яркие вспышки
 
 const PHRASES = [
     "I love you", "Мен сені жақсы көремін", "我爱你", "사랑해", 
@@ -23,8 +23,8 @@ const PHRASES = [
     "ฉันรักเธอ", "Anh yêu em", "Aku cinta kamu", "Я тебе кохаю"
 ];
 
-const CX = 400;
-const CY_offset = 400;
+const CX = 500;
+const CY_offset = 500;
 
 ctx.textAlign = "center";
 ctx.textBaseline = "middle";
@@ -45,6 +45,26 @@ class Random {
     }
 }
 const rng = new Random(11);
+
+// ВОЛШЕБНЫЕ СВЕТЛЯЧКИ (BOKEH)
+const PARTICLES = [];
+for (let i = 0; i < 150; i++) {
+    PARTICLES.push({
+        x: Math.random() * 1000,
+        y: Math.random() * 1000,
+        r: Math.random() * 3 + 1, // Крупнее
+        dy: Math.random() * 0.5 + 0.2,
+        dx: Math.random() * Math.PI * 2, // Для синусоиды
+        dxSpeed: Math.random() * 0.02 + 0.01,
+        alpha: Math.random(),
+        da: (Math.random() - 0.5) * 0.03,
+        c: rng.choice([
+            '255, 50, 100', // Розовый неон
+            '255, 200, 220', // Белый неон
+            '200, 0, 50'     // Темно-красный
+        ])
+    });
+}
 
 function heart(a) {
     const x = 16 * Math.pow(Math.sin(a), 3);
@@ -164,9 +184,9 @@ function build() {
         y -= row_h;
     }
 
-    const wine = [0.58, 0.0, 0.09];
-    const crimson = [0.90, 0.05, 0.14];
-    const blood = [0.98, 0.10, 0.16];
+    const wine = [0.65, 0.0, 0.15];
+    const crimson = [1.0, 0.1, 0.25];
+    const blood = [1.0, 0.15, 0.3];
 
     for (const p of placed) {
         const rad = Math.min(1.0, math_dist(p.x, p.y));
@@ -203,7 +223,11 @@ function step() {
             acc -= 1;
             active.push(ORDER[spawnIndex++]);
         }
-        if (spawnIndex >= ORDER.length) spawning = false;
+        if (spawnIndex >= ORDER.length) {
+            spawning = false;
+            // Включаем пульсацию, когда все слова появились
+            canvas.classList.add('beating');
+        }
     }
 
     for (let i = active.length - 1; i >= 0; i--) {
@@ -217,9 +241,9 @@ function step() {
 
     draw();
 
-    if (!spawning && active.length === 0) {
+    if (!spawning && active.length === 0 && !window.shimmerStarted) {
+        window.shimmerStarted = true;
         setTimeout(shimmer, 140);
-        return;
     }
     
     requestAnimationFrame(step);
@@ -228,11 +252,48 @@ function step() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Отрисовка магической пыли с мягким свечением
+    for (const p of PARTICLES) {
+        p.y -= p.dy;
+        p.dx += p.dxSpeed; 
+        const realX = p.x + Math.sin(p.dx) * 15; // Танцующее движение
+        
+        p.alpha += p.da;
+        if (p.alpha <= 0.05 || p.alpha >= 0.7) p.da *= -1; 
+        if (p.y < -20) {
+            p.y = 1020;
+            p.x = Math.random() * 1000;
+        }
+        
+        ctx.beginPath();
+        ctx.arc(realX, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.c}, ${p.alpha})`;
+        
+        // Свечение пылинок
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = `rgba(${p.c}, 0.8)`;
+        ctx.fill();
+    }
+    
+    // Отключаем тени для оптимизации основного текста
+    ctx.shadowBlur = 0;
+
     for (const p of finished) {
         ctx.font = `bold ${p.size}px ${FONT}`;
         ctx.fillStyle = hx(p.currentColor);
+        
+        // Если слово мерцает, добавляем ему яркое неоновое свечение
+        if (p.isShimmering) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#ffb3c6';
+        } else {
+            ctx.shadowBlur = 0;
+        }
+        
         ctx.fillText(p.text, CX + p.x, CY_offset - p.y);
     }
+
+    ctx.shadowBlur = 0; // Сбрасываем тени для активных частиц
 
     for (const p of active) {
         const u = clamp(p.f / ANIM);
@@ -257,25 +318,38 @@ function draw() {
         ctx.fillStyle = haloFill;
         ctx.fillText(p.text, px, py);
 
+        // В момент появления слово тоже светится
+        ctx.shadowBlur = flash * 20;
+        ctx.shadowColor = hx(FLASH);
+        
         ctx.font = `bold ${p.size}px ${FONT}`;
         ctx.fillStyle = mainFill;
         ctx.fillText(p.text, px, py);
+        
+        ctx.shadowBlur = 0;
     }
 }
 
 function shimmer() {
     if (finished.length === 0) return;
-    const p = finished[Math.floor(Math.random() * finished.length)];
-    const orig = p.color;
-    p.currentColor = mix(orig, FLASH, 0.6);
-    draw();
     
-    setTimeout(() => {
-        p.currentColor = orig;
-        draw();
-    }, 260);
+    // Заставляем мерцать сразу несколько слов для большего вау-эффекта
+    const count = Math.floor(Math.random() * 3) + 1;
     
-    setTimeout(shimmer, 140);
+    for (let i = 0; i < count; i++) {
+        const p = finished[Math.floor(Math.random() * finished.length)];
+        const orig = p.color;
+        
+        p.currentColor = mix(orig, FLASH, 0.8);
+        p.isShimmering = true;
+        
+        setTimeout(() => {
+            p.currentColor = orig;
+            p.isShimmering = false;
+        }, 350);
+    }
+    
+    setTimeout(shimmer, 200);
 }
 
 setTimeout(() => requestAnimationFrame(step), 200);
