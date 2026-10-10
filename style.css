@@ -8,7 +8,6 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    /* Блокируем любые системные жесты, зум и свайпы на телефонах */
     touch-action: none; 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -17,10 +16,9 @@ body {
 
 canvas {
     background-color: #060208;
-    /* Идеально вписывает квадратный холст в любой прямоугольный экран телефона */
-    width: 100vmin;
-    height: 100vmin;
+    width: 100%;
     max-width: 800px;
-    max-height: 800px;
+    max-height: 100vh;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
 }
