@@ -1,7 +1,8 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #060208;
+    /* Более глубокий и насыщенный космический бордовый градиент */
+    background: radial-gradient(circle at center, #2a0008 0%, #0a0105 50%, #000000 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,10 +16,26 @@ body {
 }
 
 canvas {
-    background-color: #060208;
-    width: 100%;
-    max-width: 800px;
+    background: transparent;
+    width: 100vw;
+    max-width: 100%;
     max-height: 100vh;
     aspect-ratio: 1 / 1;
     object-fit: contain;
+    /* Плавный переход для эффекта свечения */
+    filter: drop-shadow(0 0 15px rgba(255, 20, 60, 0.2));
+}
+
+/* Анимация живого сердцебиения */
+@keyframes heartbeat {
+    0%   { transform: scale(1); }
+    15%  { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(255, 20, 60, 0.6)); }
+    30%  { transform: scale(1); }
+    45%  { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(255, 20, 60, 0.6)); }
+    60%  { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 20, 60, 0.2)); }
+    100% { transform: scale(1); }
+}
+
+.beating {
+    animation: heartbeat 1.5s infinite ease-in-out;
 }
