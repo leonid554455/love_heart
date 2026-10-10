@@ -5,10 +5,22 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
     height: 100vh;
     overflow: hidden;
+    /* Блокируем любые системные жесты, зум и свайпы на телефонах */
+    touch-action: none; 
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 canvas {
     background-color: #060208;
+    /* Идеально вписывает квадратный холст в любой прямоугольный экран телефона */
+    width: 100vmin;
+    height: 100vmin;
+    max-width: 800px;
+    max-height: 800px;
+    object-fit: contain;
 }
