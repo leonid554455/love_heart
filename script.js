@@ -15,19 +15,12 @@ const BGC = [0x06 / 255, 0x02 / 255, 0x08 / 255];
 const FLASH = [1.0, 0.78, 0.78];
 
 const PHRASES = [
-    "I love you",              
-    "Мен сені жақсы көремін",  
-    "我爱你",                   
-    "사랑해",                   
-    "愛してる",                 
-    "Men seni sevaman",         
-    "Te iubesc",                
-
-    "Seni seviyorum", "Te amo", "Je t'aime",
-    "Ich liebe dich", "Ti amo", "Eu te amo", "Я тебя люблю",
-    "मैं तुमसे प्यार करता हूँ", "Σ' αγαπώ", "Ik hou van jou", 
-    "Jag älskar dig", "Kocham cię", "ฉันรักเธอ", "Anh yêu em", 
-    "Aku cinta kamu", "Я тебе кохаю"
+    "I love you", "Мен сені жақсы көремін", "我爱你", "사랑해", 
+    "愛してる", "Men seni sevaman", "Te iubesc", "Seni seviyorum", 
+    "Te amo", "Je t'aime", "Ich liebe dich", "Ti amo", 
+    "Eu te amo", "Я тебя люблю", "मैं तुमसे प्यार करता हूँ", 
+    "Σ' αγαπώ", "Ik hou van jou", "Jag älskar dig", "Kocham cię", 
+    "ฉันรักเธอ", "Anh yêu em", "Aku cinta kamu", "Я тебе кохаю"
 ];
 
 const CX = 400;
@@ -228,7 +221,8 @@ function step() {
         setTimeout(shimmer, 140);
         return;
     }
-    setTimeout(step, TICK);
+    
+    requestAnimationFrame(step);
 }
 
 function draw() {
@@ -284,4 +278,5 @@ function shimmer() {
     setTimeout(shimmer, 140);
 }
 
-setTimeout(step, 200);
+// Запуск
+setTimeout(() => requestAnimationFrame(step), 200);
