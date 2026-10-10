@@ -2,8 +2,8 @@ const canvas = document.getElementById("cvs");
 const ctx = canvas.getContext("2d");
 
 // Уменьшенный масштаб и увеличенные шрифты для телефонов
-const SC = 15; 
-const OY = 15; 
+const SC = 18; 
+const OY = 18; 
 const DURATION = 10;
 const TICK = 16;
 const ANIM = 42;
